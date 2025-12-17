@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Modules\User\Requests;
+namespace App\Modules\Auth\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateUserRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class CreateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
         ];
     }
 }
