@@ -20,8 +20,10 @@ php artisan make:module Product
 ```
 
 This command will create:
-- `app/Modules/Product/Controllers/ProductController.php`
-- `app/Modules/Product/Services/ProductService.php`
+- `app/Modules/Product/Controllers/Web/ProductController.php`
+- `app/Modules/Product/Controllers/Api/ApiProductController.php`
+- `app/Modules/Product/Services/Web/ProductService.php`
+- `app/Modules/Product/Services/Api/ApiProductService.php`
 - `app/Modules/Product/Models/Product.php`
 - `app/Modules/Product/routes/web.php`
 - `app/Modules/Product/routes/api.php`
@@ -31,9 +33,15 @@ This command will create:
 ```
 app/Modules/Product/
 ├── Controllers/
-│   └── ProductController.php
+│   ├── Api/
+│   │   └── ApiProductController.php
+│   └── Web/
+│       └── ProductController.php
 ├── Services/
-│   └── ProductService.php
+│   ├── Api/
+│   │   └── ApiProductService.php
+│   └── Web/
+│       └── ProductService.php
 ├── Models/
 │   └── Product.php
 ├── Requests/
@@ -73,15 +81,27 @@ This will create `app/Modules/User/Models/Product.php` with:
 Generate a service file for a specific module.
 
 ```bash
-php artisan make:module-service {module} {name}
+php artisan make:module-service {module} {name} [--api]
 ```
 
-**Example:**
+**Examples:**
 ```bash
+# Web service (default)
 php artisan make:module-service User Product
+
+# API service
+php artisan make:module-service User Product --api
 ```
 
-This will create `app/Modules/User/Services/ProductService.php` with proper namespace `App\Modules\User\Services`.
+**Web Service** (default):
+- Creates `app/Modules/User/Services/Web/ProductService.php`
+- Namespace: `App\Modules\User\Services\Web`
+- Class name: `ProductService`
+
+**API Service** (with `--api` flag):
+- Creates `app/Modules/User/Services/Api/ApiProductService.php`
+- Namespace: `App\Modules\User\Services\Api`
+- Class name: `ApiProductService`
 
 **Note:** The service name will automatically have "Service" suffix added (e.g., `Product` → `ProductService`).
 
@@ -93,19 +113,27 @@ Generate a controller file for a specific module.
 php artisan make:module-controller {module} {name} [--api]
 ```
 
-**Example:**
+**Examples:**
 ```bash
-# Regular controller
+# Web controller (default)
 php artisan make:module-controller User Product
 
 # API controller
 php artisan make:module-controller User Product --api
 ```
 
-This will create `app/Modules/User/Controllers/ProductController.php` with:
-- Proper namespace: `App\Modules\User\Controllers`
+**Web Controller** (default):
+- Creates `app/Modules/User/Controllers/Web/ProductController.php`
+- Namespace: `App\Modules\User\Controllers\Web`
+- Class name: `ProductController`
 - Extends `App\Http\Controllers\Controller`
-- `--api` flag adds `JsonResponse` import for API controllers
+
+**API Controller** (with `--api` flag):
+- Creates `app/Modules/User/Controllers/Api/ApiProductController.php`
+- Namespace: `App\Modules\User\Controllers\Api`
+- Class name: `ApiProductController`
+- Extends `App\Http\Controllers\Controller`
+- Includes `JsonResponse` import
 
 **Note:** The controller name will automatically have "Controller" suffix added (e.g., `Product` → `ProductController`).
 
@@ -195,7 +223,15 @@ Modules are automatically loaded by the application:
 
 - **Routes:** Module routes are automatically registered from `routes/web.php` and `routes/api.php`
 - **Migrations:** Module migrations are automatically loaded from `database/migrations/`
-- **Namespace:** All module classes follow the pattern `App\Modules\{ModuleName}\{Type}`
+- **Namespace:** All module classes follow the pattern `App\Modules\{ModuleName}\{Type}` or `App\Modules\{ModuleName}\{Type}\{SubType}` for Api/Web separation
+
+### Separation of Concerns
+
+The module structure separates API and Web concerns:
+
+- **Controllers:** API controllers are in `Controllers/Api/` with `Api` prefix, Web controllers are in `Controllers/Web/`
+- **Services:** API services are in `Services/Api/` with `Api` prefix, Web services are in `Services/Web/`
+- **Routes:** API routes use API controllers, Web routes use Web controllers
 
 ## Getting Started
 
@@ -214,11 +250,17 @@ Modules are automatically loaded by the application:
    # Create a model
    php artisan make:module-model YourModule YourModel
 
-   # Create a service
+   # Create a web service
    php artisan make:module-service YourModule YourService
 
-   # Create a controller
+   # Create an API service
+   php artisan make:module-service YourModule YourService --api
+
+   # Create a web controller
    php artisan make:module-controller YourModule YourController
+
+   # Create an API controller
+   php artisan make:module-controller YourModule YourController --api
 
    # Create a form request
    php artisan make:module-request YourModule StoreYourModel

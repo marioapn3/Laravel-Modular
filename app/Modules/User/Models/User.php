@@ -10,7 +10,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     protected $table = 'users';
-
     use HasFactory, Notifiable;
 
     /**
@@ -49,8 +48,10 @@ class User extends Authenticatable implements JWTSubject
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
      */
-    public function getJWTIdentifier(): mixed
+    public function getJWTIdentifier()
     {
         return $this->getKey();
     }
@@ -58,9 +59,9 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
-     * @return array<string, mixed>
+     * @return array
      */
-    public function getJWTCustomClaims(): array
+    public function getJWTCustomClaims()
     {
         return [];
     }

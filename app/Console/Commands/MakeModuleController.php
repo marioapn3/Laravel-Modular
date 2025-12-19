@@ -35,7 +35,25 @@ class MakeModuleController extends Command
             $controllerName .= 'Controller';
         }
 
-        $controllerFile = "{$controllersPath}/{$controllerName}.php";
+        $controllerFile = '';
+        $namespace = "App\Modules\\{$moduleName}\Controllers";
+
+        if ($this->option('api')) {
+            $apiPath = "{$controllersPath}/Api";
+            if (! File::exists($apiPath)) {
+                File::makeDirectory($apiPath, recursive: true);
+            }
+            $controllerFile = "{$apiPath}/Api{$controllerName}.php";
+            $controllerName = 'Api'.$controllerName;
+            $namespace .= '\Api';
+        } else {
+            $webPath = "{$controllersPath}/Web";
+            if (! File::exists($webPath)) {
+                File::makeDirectory($webPath, recursive: true);
+            }
+            $controllerFile = "{$webPath}/{$controllerName}.php";
+            $namespace .= '\Web';
+        }
 
         if (File::exists($controllerFile)) {
             $this->error("Controller {$controllerName} already exists in module {$moduleName}!");
@@ -47,7 +65,7 @@ class MakeModuleController extends Command
             $controllerContent = <<<PHP
 <?php
 
-namespace App\Modules\\{$moduleName}\Controllers;
+namespace {$namespace};
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -61,7 +79,7 @@ PHP;
             $controllerContent = <<<PHP
 <?php
 
-namespace App\Modules\\{$moduleName}\Controllers;
+namespace {$namespace};
 
 use App\Http\Controllers\Controller;
 

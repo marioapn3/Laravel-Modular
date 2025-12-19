@@ -27,16 +27,22 @@ class MakeModule extends Command
         // Create directories
         File::makeDirectory($modulePath, recursive: true);
         File::makeDirectory("{$modulePath}/Controllers", recursive: true);
+        File::makeDirectory("{$modulePath}/Controllers/Api", recursive: true);
+        File::makeDirectory("{$modulePath}/Controllers/Web", recursive: true);
         File::makeDirectory("{$modulePath}/Services", recursive: true);
+        File::makeDirectory("{$modulePath}/Services/Api", recursive: true);
+        File::makeDirectory("{$modulePath}/Services/Web", recursive: true);
         File::makeDirectory("{$modulePath}/Models", recursive: true);
         File::makeDirectory("{$modulePath}/routes", recursive: true);
         File::makeDirectory("{$modulePath}/database/migrations", recursive: true);
 
-        // Generate Controller
-        $this->createController($modulePath, $moduleName);
+        // Generate Controllers
+        $this->createWebController($modulePath, $moduleName);
+        $this->createApiController($modulePath, $moduleName);
 
-        // Generate Service
-        $this->createService($modulePath, $moduleName);
+        // Generate Services
+        $this->createWebService($modulePath, $moduleName);
+        $this->createApiService($modulePath, $moduleName);
 
         // Generate Model
         $this->createModel($modulePath, $moduleName);
@@ -50,12 +56,12 @@ class MakeModule extends Command
         return self::SUCCESS;
     }
 
-    protected function createController(string $modulePath, string $moduleName): void
+    protected function createWebController(string $modulePath, string $moduleName): void
     {
         $controllerContent = <<<PHP
 <?php
 
-namespace App\Modules\\{$moduleName}\Controllers;
+namespace App\Modules\\{$moduleName}\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 
@@ -65,15 +71,34 @@ class {$moduleName}Controller extends Controller
 }
 PHP;
 
-        File::put("{$modulePath}/Controllers/{$moduleName}Controller.php", $controllerContent);
+        File::put("{$modulePath}/Controllers/Web/{$moduleName}Controller.php", $controllerContent);
     }
 
-    protected function createService(string $modulePath, string $moduleName): void
+    protected function createApiController(string $modulePath, string $moduleName): void
+    {
+        $controllerContent = <<<PHP
+<?php
+
+namespace App\Modules\\{$moduleName}\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+
+class Api{$moduleName}Controller extends Controller
+{
+    //
+}
+PHP;
+
+        File::put("{$modulePath}/Controllers/Api/Api{$moduleName}Controller.php", $controllerContent);
+    }
+
+    protected function createWebService(string $modulePath, string $moduleName): void
     {
         $serviceContent = <<<PHP
 <?php
 
-namespace App\Modules\\{$moduleName}\Services;
+namespace App\Modules\\{$moduleName}\Services\Web;
 
 class {$moduleName}Service
 {
@@ -81,7 +106,23 @@ class {$moduleName}Service
 }
 PHP;
 
-        File::put("{$modulePath}/Services/{$moduleName}Service.php", $serviceContent);
+        File::put("{$modulePath}/Services/Web/{$moduleName}Service.php", $serviceContent);
+    }
+
+    protected function createApiService(string $modulePath, string $moduleName): void
+    {
+        $serviceContent = <<<PHP
+<?php
+
+namespace App\Modules\\{$moduleName}\Services\Api;
+
+class Api{$moduleName}Service
+{
+    //
+}
+PHP;
+
+        File::put("{$modulePath}/Services/Api/Api{$moduleName}Service.php", $serviceContent);
     }
 
     protected function createModel(string $modulePath, string $moduleName): void
@@ -117,7 +158,7 @@ PHP;
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\\{$moduleName}\Controllers\\{$moduleName}Controller;
+use App\Modules\\{$moduleName}\Controllers\Web\\{$moduleName}Controller;
 
 Route::prefix('{$moduleNameLower}')->name('{$moduleNameLower}.')->group(function () {
     // Route::get('/', [{$moduleName}Controller::class, 'index'])->name('index');
@@ -135,11 +176,11 @@ PHP;
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\\{$moduleName}\Controllers\\{$moduleName}Controller;
+use App\Modules\\{$moduleName}\Controllers\Api\Api{$moduleName}Controller;
 
 Route::prefix('{$moduleNameLower}')->name('{$moduleNameLower}.')->group(function () {
-    // Route::get('/', [{$moduleName}Controller::class, 'index'])->name('index');
-    // Route::get('/{id}', [{$moduleName}Controller::class, 'show'])->name('show');
+    // Route::get('/', [Api{$moduleName}Controller::class, 'index'])->name('index');
+    // Route::get('/{id}', [Api{$moduleName}Controller::class, 'show'])->name('show');
 });
 PHP;
 

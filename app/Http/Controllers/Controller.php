@@ -17,6 +17,8 @@ class Controller extends BaseController
 
     public function error($message = 'Error', $status = 400)
     {
+        $status = ($status > 0 && $status < 600) ? $status : 400;
+        
         return response()->json([
             'success' => false,
             'message' => $message,
