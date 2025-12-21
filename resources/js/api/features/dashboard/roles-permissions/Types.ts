@@ -6,6 +6,15 @@ export interface Role {
     guard_name: string
     created_at: string
     updated_at: string
+    permissions?: Permission[]
 }
 
 export type RolePaginationResponse = PaginationResponse<Role>
+
+export interface Permission {
+    id: number
+    name: string
+    guard_name: string
+    created_at: string
+    updated_at: string
+}

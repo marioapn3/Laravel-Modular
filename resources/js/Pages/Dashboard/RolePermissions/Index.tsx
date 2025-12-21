@@ -4,12 +4,14 @@ import { getRoles } from "../../../api/features/dashboard/roles-permissions";
 import ProTable, { Column } from "../../../components/tables/ProTables/ProTable";
 import { Role, RolePaginationResponse } from "../../../api/features/dashboard/roles-permissions/Types";
 import Badge from "../../../components/ui/badge/Badge";
-import { Edit, Trash2, Shield, Search, X, Plus } from "lucide-react";
+import { Edit, Trash2, Shield, Search, X, Plus, Key, Link2 } from "lucide-react";
 import Button from "../../../components/ui/button/Button";
 import { router } from "@inertiajs/react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ModalRole from "./ModalRole";
 import ModalDeleteRole from "./ModalDeleteRole";
+import ModalPermission from "./ModalPermission";
+import ModalSyncPermissions from "./ModalSyncPermissions";
 import { toast } from "sonner";
 
 function RolesList() {
@@ -19,6 +21,9 @@ function RolesList() {
     const [selectedRole, setSelectedRole] = useState<Role | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
+    const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
+    const [isSyncPermissionsModalOpen, setIsSyncPermissionsModalOpen] = useState(false);
+    const [roleToSyncPermissions, setRoleToSyncPermissions] = useState<Role | null>(null);
 
     const getSearchFromUrl = useCallback(() => {
         const urlObj = new URL(window.location.href);
@@ -124,6 +129,18 @@ function RolesList() {
                     <Button
                         size="sm"
                         variant="outline"
+                        startIcon={<Link2 className="w-4 h-4" />}
+                        onClick={(e) => {
+                            e?.stopPropagation();
+                            setRoleToSyncPermissions(role);
+                            setIsSyncPermissionsModalOpen(true);
+                        }}
+                    >
+                        Permissions
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="outline"
                         startIcon={<Edit className="w-4 h-4" />}
                         onClick={(e) => {
                             e?.stopPropagation();
@@ -192,12 +209,30 @@ function RolesList() {
         refetch();
     };
 
+    const handlePermissionSuccess = () => {
+        toast.success("Permission created successfully");
+    };
+
+    const handleSyncPermissionsSuccess = () => {
+        toast.success("Permissions synced successfully");
+        refetch();
+    };
+
+    const handleClosePermissionModal = () => {
+        setIsPermissionModalOpen(false);
+    };
+
+    const handleCloseSyncPermissionsModal = () => {
+        setIsSyncPermissionsModalOpen(false);
+        setRoleToSyncPermissions(null);
+    };
+
 
     return (
         <div className="space-y-6">
             <PageBreadcrumb pageTitle="Role Permissions" subTitle="Manage roles and their permissions" listBreadcrumb={["Roles"]} />
 
-            {/* Search Bar and Create Button */}
+            {/* Search Bar and Create Buttons */}
             <div className="flex items-center gap-4">
                 <div className="relative flex-1 max-w-md">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -219,6 +254,13 @@ function RolesList() {
                         </button>
                     )}
                 </div>
+                <Button
+                    variant="outline"
+                    startIcon={<Key className="w-4 h-4" />}
+                    onClick={() => setIsPermissionModalOpen(true)}
+                >
+                    Create Permission
+                </Button>
                 <Button
                     variant="primary"
                     startIcon={<Plus className="w-4 h-4" />}
@@ -255,6 +297,21 @@ function RolesList() {
                 onClose={handleCloseDeleteModal}
                 onSuccess={handleDeleteSuccess}
                 role={roleToDelete}
+            />
+
+            {/* Create Permission Modal */}
+            <ModalPermission
+                isOpen={isPermissionModalOpen}
+                onClose={handleClosePermissionModal}
+                onSuccess={handlePermissionSuccess}
+            />
+
+            {/* Sync Permissions Modal */}
+            <ModalSyncPermissions
+                isOpen={isSyncPermissionsModalOpen}
+                onClose={handleCloseSyncPermissionsModal}
+                onSuccess={handleSyncPermissionsSuccess}
+                role={roleToSyncPermissions}
             />
         </div>
     );

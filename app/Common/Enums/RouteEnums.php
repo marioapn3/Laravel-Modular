@@ -17,6 +17,10 @@ enum RouteEnums: string
     case ROLE_PERMISSION_UPDATE_ROLE = 'role-permission.roles.update-role';
     case ROLE_PERMISSION_DELETE_ROLE = 'role-permission.roles.delete-role';
     case ROLE_PERMISSION_GET_ALL_ROLES = 'role-permission.roles.get-all-roles';
+    case ROLE_PERMISSION_GET_ALL_PERMISSIONS = 'role-permission.permissions.get-all-permissions';
+    case ROLE_PERMISSION_CREATE_PERMISSION = 'role-permission.permissions.create-permission';
+    case ROLE_PERMISSION_SYNC_PERMISSIONS_TO_ROLE = 'role-permission.permissions.sync-permissions-to-role';
+    case ROLE_PERMISSION_GET_ROLE_PERMISSIONS = 'role-permission.permissions.get-role-permissions';
 
     // ========= App Settings Module =========
     case APP_SETTINGS_VIEW = 'app-settings.view';
