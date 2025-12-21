@@ -13,10 +13,7 @@ import ModalDeleteRole from "./ModalDeleteRole";
 import { toast } from "sonner";
 
 function RolesList() {
-    const { data, loading, refetch } = useFetchWithPagination<RolePaginationResponse>(
-        getRoles,
-        { perPage: 15 }
-    );
+    const { data, loading, refetch } = useFetchWithPagination<RolePaginationResponse>(getRoles, { perPage: 15 });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRole, setSelectedRole] = useState<Role | null>(null);

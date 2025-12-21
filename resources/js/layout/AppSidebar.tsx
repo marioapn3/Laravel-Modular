@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { usePage } from "@inertiajs/react";
 import { useSidebar } from "../context/SidebarContext";
-import { BoxIcon, CalendarSearchIcon, ChevronDownIcon, EllipsisIcon, GridIcon, ListIcon, PackageIcon, PieChartIcon, PlugIcon, TableIcon, UserCircleIcon } from "lucide-react";
+import { BoxIcon, CalendarSearchIcon, ChevronDownIcon, EllipsisIcon, GridIcon, ListIcon, PackageIcon, PieChartIcon, PlugIcon, Settings, TableIcon, UserCircleIcon } from "lucide-react";
+import { AppSettings } from "../api/features/dashboard/app-setings/Types";
+import { getAppSettings } from "../api/features/dashboard/app-setings";
 
 type NavItem = {
   name: string;
@@ -21,6 +23,11 @@ const navItems: NavItem[] = [
     icon: <UserCircleIcon />,
     name: "Roles & Permissions",
     path: "/dashboard/role-permissions",
+  },
+  {
+    icon: <Settings />,
+    name: "App Settings",
+    path: "/dashboard/app-settings",
   },
   {
     icon: <CalendarSearchIcon />,
@@ -267,6 +274,20 @@ const AppSidebar: React.FC = () => {
     </ul>
   );
 
+  // state appSetting from fetching data
+  const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchAppSetting = async () => {
+      setLoading(true);
+      const response = await getAppSettings();
+      setLoading(false);
+      setAppSettings(response);
+    };
+    fetchAppSetting();
+  }, [url]);
+
+
   return (
     <aside
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
@@ -288,20 +309,37 @@ const AppSidebar: React.FC = () => {
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
+              {
+                appSettings?.app_logo != null ? (
+                  <div className="flex items-center gap-2">
+                    <img
+                      className="max-w-[50px] max-h-[50px]"
+                      src={appSettings?.app_logo}
+                      alt="Logo"
+                      width={50}
+                      height={50}
+                    />
+                    <h2 className="text-md font-bold">{appSettings?.app_name}</h2>
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      className="dark:hidden"
+                      src="/images/logo/logo.svg"
+                      alt="Logo"
+                      width={150}
+                      height={40}
+                    />
+                    <img
+                      className="hidden dark:block"
+                      src="/images/logo/logo-dark.svg"
+                      alt="Logo"
+                      width={150}
+                      height={40}
+                    />
+                  </>
+                )
+              }
             </>
           ) : (
             <img

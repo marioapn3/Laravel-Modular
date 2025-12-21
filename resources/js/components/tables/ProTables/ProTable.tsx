@@ -35,6 +35,12 @@ export interface PaginationResponse<T> {
   links: PaginationLink[];
 }
 
+export interface Response<T> {
+  data: T;
+  success: boolean;
+  message: string;
+}
+
 // Column Definition Interface
 export interface Column<T> {
   key: string;
@@ -125,11 +131,10 @@ const Pagination: React.FC<PaginationProps> = ({
             handlePageChange(link?.url || null);
           }}
           disabled={loading || i === meta.current_page}
-          className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed ${
-            i === meta.current_page
+          className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed ${i === meta.current_page
               ? "bg-brand-500 text-white disabled:opacity-100"
               : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700"
-          }`}
+            }`}
         >
           {i}
         </button>
@@ -295,7 +300,7 @@ function ProTable<T extends Record<string, any>>({
 }: ProTableProps<T>) {
   // Handle null/undefined data dengan default ke empty array
   const safeData = data ?? [];
-  
+
   const handlePageChange = useCallback(
     (url: string | null) => {
       if (url && onPageChange) {
@@ -329,9 +334,8 @@ function ProTable<T extends Record<string, any>>({
                   <TableCell
                     key={column.key}
                     isHeader
-                    className={`px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 ${
-                      column.headerClassName || ""
-                    }`}
+                    className={`px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 ${column.headerClassName || ""
+                      }`}
                   >
                     {column.header}
                   </TableCell>
@@ -352,17 +356,15 @@ function ProTable<T extends Record<string, any>>({
                 safeData.map((item, index) => (
                   <TableRow
                     key={item.id || index}
-                    className={`${
-                      onRowClick ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5" : ""
-                    } ${rowClassName ? rowClassName(item, index) : ""}`}
+                    className={`${onRowClick ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5" : ""
+                      } ${rowClassName ? rowClassName(item, index) : ""}`}
                     onClick={onRowClick ? () => onRowClick(item) : undefined}
                   >
                     {columns.map((column) => (
                       <TableCell
                         key={column.key}
-                        className={`px-5 py-4 text-start ${
-                          column.className || ""
-                        }`}
+                        className={`px-5 py-4 text-start ${column.className || ""
+                          }`}
                       >
                         {column.render ? (
                           column.render(item, index)

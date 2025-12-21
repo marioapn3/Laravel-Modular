@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
+use Inertia\Inertia;
 
 class Controller extends BaseController
 {
@@ -37,4 +38,9 @@ class Controller extends BaseController
     {
         return response()->json($data);
     }
+
+    public function inertiaRender($view, $data = [])
+    {
+        return Inertia::render($view, $data);
+    }   
 }

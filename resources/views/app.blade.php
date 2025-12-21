@@ -7,11 +7,18 @@
 
     @viteReactRefresh
     @vite('resources/js/app.jsx')
-    @vite('resources/css/app.css')
+
+
+    @if (str_contains(request()->pathInfo, 'dashboard'))
+        @vite('resources/css/app.css')
+    @else
+        @vite('resources/css/dashboard.css')
+    @endif
     @inertiaHead
 </head>
 
 <body>
+
     @inertia
 </body>
 

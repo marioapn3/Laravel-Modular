@@ -11,4 +11,7 @@ enum ViewEnums: string
 
         // Role Permission Module
     case ROLE_PERMISSION_INDEX = 'Dashboard/RolePermissions/Index';
+
+        // App Settings Module
+    case APP_SETTINGS_INDEX = 'Dashboard/AppSettings/Index';
 }
